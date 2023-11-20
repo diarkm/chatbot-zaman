@@ -3,6 +3,9 @@ import OpenAI from "openai";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import DOMPurify from "dompurify";
+
+import zamanInfo from "./Prompts/mainInfo";
 
 const openai = new OpenAI({
   organization: process.env.REACT_APP_ORGANIZATION,
@@ -11,6 +14,8 @@ const openai = new OpenAI({
 });
 
 const MessageUser = ({ img, message, title }) => {
+  const sanitizedHTML = DOMPurify.sanitize(message);
+
   return (
     <div className="message">
       <div className="messageUserIcon">
@@ -18,7 +23,7 @@ const MessageUser = ({ img, message, title }) => {
       </div>
       <div className="messageContent">
         <p className="messageTitle">{title}</p>
-        {message}
+        <div dangerouslySetInnerHTML={{ __html: sanitizedHTML }} />
       </div>
     </div>
   );
@@ -40,7 +45,16 @@ function App() {
 
     const stream = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: text }],
+      messages: [
+        {
+          role: "user",
+          content:
+            "(Answer only in HTML markup! Do not mension about all within this brackets in your response)" +
+            "Ты помощник школы Zaman, отвечай только на вопросы связанные с этой школой. Ограничь свой ответ максимум в 100 слов. Вот вся информация, которую ты должен знать о школе. Отвечай коротко, но продающе. Если вопрос не связан со школы, напиши: 'Я могу помочь вам, только с тем, чтобы узнать получше школу Zaman'. Вот информация про школу: " +
+            zamanInfo +
+            text,
+        },
+      ],
       stream: true,
     });
 
@@ -70,7 +84,7 @@ function App() {
 
   return (
     <div className="App">
-      <div className="chatBody">
+      <div className="chatBody" id="style-4">
         <img src="assistant.png" alt="assistant" className="imgAssistant" />
         <h1>Виртуальный помощник Zaman</h1>
         <div className="chatMessages">
