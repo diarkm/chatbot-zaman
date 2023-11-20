@@ -1,0 +1,92 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #282c34;
+  min-height: 100vh;
+}
+
+.chatBody {
+  margin-top: 20px;
+  height: 90vh;
+  width: 600px;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  width: 600px;
+}
+
+.iconSend {
+  margin-right: 10px;
+  position: absolute;
+  color: #fff;
+  padding: 10px 10px;
+  background-color: #282c34;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.iconSend:hover {
+  background-color: #474d5a;
+}
+
+input {
+  padding: 15px 20px;
+  background-color: #282c34;
+  color: #fff;
+  font-size: 16px;
+  border: 1px solid #4c515c;
+  border-radius: 10px;
+  width: 100%;
+}
+
+h1 {
+  margin: 0;
+
+  font-size: 2em;
+  color: #fff;
+}
+
+.imgAssistant {
+  width: 120px;
+  height: 120px;
+
+  border-radius: 120px;
+}
+
+.message {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: row;
+}
+
+.messageContent {
+  text-align: left;
+  color: #ffffffa4;
+  width: 100%;
+  padding: 0px 20px;
+}
+
+.messageTitle {
+  margin: 0;
+  color: #ffffff;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.messageUserIcon {
+  width: auto;
+}
+
+.messageUserIcon img {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 100px;
+}
