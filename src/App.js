@@ -1,11 +1,11 @@
 import "./App.css";
 import OpenAI from "openai";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import DOMPurify from "dompurify";
 
-import zamanInfo from "./Prompts/mainInfo";
+import zamanInfo2 from "./Prompts/mainInfo";
 
 const openai = new OpenAI({
   organization: process.env.REACT_APP_ORGANIZATION,
@@ -13,7 +13,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-const MessageUser = ({ img, message, title }) => {
+const MessageUser = ({ img, message, title, isGenerating }) => {
   const sanitizedHTML = DOMPurify.sanitize(message);
 
   return (
@@ -32,6 +32,17 @@ const MessageUser = ({ img, message, title }) => {
 function App() {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState([]);
+  const [isGenerating, setGenerating] = useState(false);
+
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -40,19 +51,27 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (isGenerating) return;
     // Add the user's message to the messages state
     setMessages((prev) => [...prev, { role: "user", content: text }]);
 
+    setGenerating(true);
+
     const stream = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-16k",
       messages: [
         {
-          role: "user",
+          role: "system",
           content:
-            "(Answer only in HTML markup! Do not mension about all within this brackets in your response)" +
-            "Ты помощник школы Zaman, отвечай только на вопросы связанные с этой школой. Ограничь свой ответ максимум в 100 слов. Вот вся информация, которую ты должен знать о школе. Отвечай коротко, но продающе. Если вопрос не связан со школы, напиши: 'Я могу помочь вам, только с тем, чтобы узнать получше школу Zaman'. Вот информация про школу: " +
-            zamanInfo +
-            text,
+            "Ты помощник школы Zaman. Сейчас я дам тебе полную информацию о школе. Проанализируй и запомни всё что тут написано и отвечай мне исходя из этого текста. Ограничь свой ответ максимум в 100 слов. Вот вся информация, которую ты должен знать о школе. Отвечай коротко, но продающе. Дальше я буду спрашивать у тебя вопросы про эту школу и ты должен мне отвечать. Отвечай только об этой школе, её деятельности, сотрудниках и т.п.",
+        },
+        {
+          role: "assistant",
+          content: zamanInfo2,
+        },
+        {
+          role: "user",
+          content: text,
         },
       ],
       stream: true,
@@ -79,7 +98,15 @@ function App() {
         });
       }
     }
+    setGenerating(false);
     setText("");
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      setText("");
+      handleSubmit(event);
+    }
   };
 
   return (
@@ -95,20 +122,24 @@ function App() {
                 img={msg.role === "user" ? "teacher.png" : "assistant.png"}
                 message={msg.content}
                 title={msg.role === "user" ? "You" : "AI Ассистент Zaman"}
+                isGenerating={isGenerating}
               />
             );
           })}
+          <div ref={messagesEndRef} />
         </div>
       </div>
       <div className="form">
         <input
           type="text"
           value={text}
+          disabled={isGenerating}
           onChange={handleTextChange}
+          onKeyDown={handleKeyPress}
           placeholder="Чем я могу вам помочь?"
         />
         <FontAwesomeIcon
-          className="iconSend"
+          className={isGenerating ? "iconDisable" : "iconSend"}
           icon={faPaperPlane}
           onClick={handleSubmit}
         />
