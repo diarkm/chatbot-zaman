@@ -21,7 +21,8 @@
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  width: 600px;
+  width: 95vw;
+  max-width: 600px;
 }
 
 .iconSend {
@@ -116,4 +117,26 @@ h1 {
 #style-4::-webkit-scrollbar-thumb {
   background-color: #000000;
   border: 2px solid #555555;
+}
+@media screen and (max-width: 768px) {
+  h1 {
+    margin: 0;
+
+    font-size: 16px;
+    color: #fff;
+  }
+  .imgAssistant {
+    width: 64px;
+    height: 64px;
+  }
+  .form {
+    margin: 10px;
+  }
+  .chatBody {
+    margin-top: 20px;
+    height: 85vh;
+    overflow-y: auto;
+    width: 100vw;
+    text-align: center;
+  }
 }
