@@ -139,22 +139,29 @@ function App() {
         </div>
       </div>
       <div className="form">
-        <input
-          type="text"
-          value={text}
-          onChange={handleTextChange}
-          onKeyDown={handleKeyPress}
-          placeholder="Чем я могу вам помочь?"
-        />
-        {isGenerating ? (
-          <FontAwesomeIcon className="iconDisabled" icon={faStop} />
-        ) : (
-          <FontAwesomeIcon
-            className="iconSend"
-            icon={faPaperPlane}
-            onClick={handleSubmit}
+        <div className="inputForm">
+          <input
+            type="text"
+            value={text}
+            onChange={handleTextChange}
+            onKeyDown={handleKeyPress}
+            placeholder="Чем я могу вам помочь?"
           />
-        )}
+          {isGenerating ? (
+            <FontAwesomeIcon className="iconDisabled" icon={faStop} />
+          ) : (
+            <FontAwesomeIcon
+              className="iconSend"
+              icon={faPaperPlane}
+              onClick={handleSubmit}
+            />
+          )}
+        </div>
+        <p>
+          Информация сгенерирована искусственным интеллектом и может отличаться
+          от действительности. Для более точной информации просьба обратиться по
+          номеру: <a href="tel:+77471112605">+7(747)111-2605</a>
+        </p>
       </div>
     </div>
   );
