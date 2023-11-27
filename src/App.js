@@ -44,6 +44,22 @@ function App() {
     scrollToBottom();
   }, [messages]);
 
+  const metricService = {
+    sendMetric: async (name, value) => {
+      try {
+        await fetch("https://chat.zaman-school.kz/metrics.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ metricName: name, metricValue: value }),
+        });
+      } catch (error) {
+        console.error("Error sending metric:", error);
+      }
+    },
+  };
+
   const handleTextChange = (event) => {
     setText(event.target.value);
   };
@@ -61,6 +77,7 @@ function App() {
 
     setGenerating(true);
     setText("");
+    metricService.sendMetric("User Message", text);
 
     try {
       const stream = await openai.chat.completions.create({
@@ -107,6 +124,7 @@ function App() {
       }
     } catch {
       alert("Что-то пошло не так, попробуйте еще раз");
+      metricService.sendMetric("requestError", 1);
       setGenerating(false);
     }
     setGenerating(false);
